@@ -6,6 +6,7 @@ const inputAltura = document.getElementById('altura-da-marcacao');
 const inputTitulo = document.getElementById('titulo-da-marcacao');
 const inputConteudo = document.getElementById('conteudo-da-marcacao');
 const inputCor = document.getElementById('cor-da-marcacao');
+const radiosFormato = document.querySelectorAll('input[name="formato-da-marcacao"]');
 
 let marcacaoSelecionada = document.querySelector('.marcacao.selecionada');
 
@@ -33,6 +34,23 @@ function preencherControles(marcacao) {
   }
 }
 
+function atualizaMarcacao() {
+  if (!marcacaoSelecionada) return;
+
+  marcacaoSelecionada.style.left = inputX.value + 'px';
+  marcacaoSelecionada.style.top = inputY.value + 'px';
+  marcacaoSelecionada.style.width = inputLargura.value + 'px';
+  marcacaoSelecionada.style.height = inputAltura.value + 'px';
+
+  marcacaoSelecionada.dataset.titulo = inputTitulo.value;
+  marcacaoSelecionada.dataset.conteudo = inputConteudo.value;
+  marcacaoSelecionada.dataset.cor = inputCor.value;
+
+  marcacaoSelecionada.classList.remove('formato-oval', 'formato-retangular');
+  const formatoSelecionado = document.querySelector('input[name="formato-da-marcacao"]:checked').value;
+  marcacaoSelecionada.classList.add(formatoSelecionado);
+}
+
 todasMarcacoes.forEach((marcacao, index) => {
   marcacao.style.cursor = 'pointer';
   
@@ -45,4 +63,30 @@ todasMarcacoes.forEach((marcacao, index) => {
     marcacaoSelecionada = marcacao;
     preencherControles(marcacao);
   });
+});
+
+const camposControle = document.querySelectorAll(
+  '.controles input:not([type="checkbox"]), .controles textarea'
+);
+
+camposControle.forEach(campo => {
+  campo.addEventListener('input', atualizaMarcacao);
+});
+
+radiosFormato.forEach(radio => {
+  radio.addEventListener('change', atualizaMarcacao);
+});
+
+const checkboxVisibilidade = document.getElementById('visibilidade-das-marcacoes');
+
+checkboxVisibilidade.addEventListener('change', () => {
+  if (checkboxVisibilidade.checked) {
+    todasMarcacoes.forEach(marcacao => {
+      marcacao.style.display = 'none';
+    });
+  } else {
+    todasMarcacoes.forEach(marcacao => {
+      marcacao.style.display = 'block';
+    });
+  }
 });
